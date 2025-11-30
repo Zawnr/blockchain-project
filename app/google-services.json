@@ -1,45 +1,26 @@
 {
   "project_info": {
-    "project_number": "860853048952",
-    "firebase_url": "https://tapetrove-8fcd1-default-rtdb.firebaseio.com",
-    "project_id": "tapetrove-8fcd1",
-    "storage_bucket": "tapetrove-8fcd1.appspot.com"
+    "project_number": "36061313938",
+    "project_id": "tapetrove-9f0af",
+    "storage_bucket": "tapetrove-9f0af.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:860853048952:android:22566aba4665533f9aff8d",
+        "mobilesdk_app_id": "1:36061313938:android:68caed639e3f13109b1f4b",
         "android_client_info": {
           "package_name": "com.example.tapetrove"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "860853048952-5ghsg6mju2nha5slppghl12o4ih3nbql.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.tapetrove",
-            "certificate_hash": "be6f73c48afb94c32d9f9c335cdc7b3a4f221cf1"
-          }
-        },
-        {
-          "client_id": "860853048952-fsdude2hf936h2qkhsikt732lornee01.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAYWu6rzyX3dSZz4jsStNri1Nl39Bqy8uo"
+          "current_key": "AIzaSyAM-gXqiOVe01Xdjrbcw4JTZGRQYDH0zOw"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "860853048952-fsdude2hf936h2qkhsikt732lornee01.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

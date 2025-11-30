@@ -3,6 +3,12 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+// Memuat properti dari file local.properties
+Properties properties = new Properties()
+if (project.rootProject.file('local.properties').exists()) {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+}
+
 android {
     namespace 'com.example.tapetrove'
     compileSdk 34
@@ -15,6 +21,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 1. Blockchain Keys
+        buildConfigField "String", "MY_SEPOLIA_KEY", "\"${properties.getProperty('SEPOLIA_PRIVATE_KEY', '')}\""
+        buildConfigField "String", "MY_INFURA_ID", "\"${properties.getProperty('INFURA_PROJECT_ID', '')}\""
+
+        // 2. Midtrans Keys
+        buildConfigField "String", "MIDTRANS_CLIENT_KEY", "\"${properties.getProperty('MIDTRANS_CLIENT_KEY', '')}\""
+        buildConfigField "String", "MERCHANT_BASE_URL", "\"${properties.getProperty('MERCHANT_BASE_URL', '')}\""
     }
 
     buildTypes {
@@ -26,6 +40,20 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -60,4 +88,11 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.0.0')
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:21.1.1")
+
+    // Midtrans Payment Gateway
+    implementation 'com.midtrans:uikit:2.0.0-alpha14'
+
+    // Web3j for Ethereum Interaction
+    implementation 'org.web3j:core:4.10.0'
+
 }
