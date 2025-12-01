@@ -101,12 +101,12 @@ public class SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                               if (task.isSuccessful()) {
-                                Toast.makeText(SignUpActivity.this, "Registration successful! Please sign in.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "Akun berhasil dibuat", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
-                                finish();
                               } else {
-                                Toast.makeText(SignUpActivity.this, "Failed to save user data.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "Gagal menyimpan data pengguna.", Toast.LENGTH_SHORT).show();
                               }
                             }
                           });

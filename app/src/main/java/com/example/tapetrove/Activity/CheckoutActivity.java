@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.tapetrove.BuildConfig;
-import com.midtrans.sdk.uikit.api.model.PaymentMethod;
-import com.midtrans.sdk.uikit.api.model.TransactionResult;
-import com.midtrans.sdk.uikit.external.UiKitApi;
-import com.midtrans.sdk.uikit.internal.util.UiKitConstants;
 
-import java.util.ArrayList;
+import com.example.tapetrove.BuildConfig;
+import com.midtrans.sdk.corekit.callback.TransactionFinishedCallback;
+import com.midtrans.sdk.corekit.core.MidtransSDK;
+import com.midtrans.sdk.corekit.models.snap.TransactionResult;
+import com.midtrans.sdk.uikit.SdkUIFlowBuilder;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,35 +17,44 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CheckoutActivity extends AppCompatActivity {
+public class CheckoutActivity extends AppCompatActivity implements TransactionFinishedCallback {
 
     private BlockchainService blockchainService;
 
-    // The IP address 10.0.2.2 is a special alias to your host loopback interface (i.e., 127.0.0.1 on your development machine)
-    // This is needed for the Android emulator to connect to a server running on localhost.
     private static final String BACKEND_BASE_URL = "http://10.0.2.2:3000/";
+    public static final String EXTRA_GROSS_AMOUNT = "extra_gross_amount";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         blockchainService = new BlockchainService();
-        initMidtrans();
-        fetchSnapToken(); // Start the process by fetching the token
+        initMidtransSdk();
+        fetchSnapToken();
     }
 
-    private void initMidtrans() {
-        UiKitApi.Builder builder = new UiKitApi.Builder()
-                .withContext(this)
-                .withMerchantUrl(BuildConfig.MERCHANT_BASE_URL)
-                .withMerchantClientKey(BuildConfig.MIDTRANS_CLIENT_KEY)
-                .setTransactionFinishedCallback(this::handleTransactionResult);
-        UiKitApi.Companion.setBuiltInTokenStorage(true);
-        builder.build();
+    private void initMidtransSdk() {
+        SdkUIFlowBuilder.init()
+                .setClientKey(BuildConfig.MIDTRANS_CLIENT_KEY)
+                .setContext(this)
+                .setTransactionFinishedCallback(this)
+                .setMerchantBaseUrl(BuildConfig.MERCHANT_BASE_URL)
+                .enableLog(true)
+                .buildSDK();
     }
 
     private void fetchSnapToken() {
         showToast("Requesting transaction from server...");
+
+        long grossAmount = getIntent().getLongExtra(EXTRA_GROSS_AMOUNT, 0);
+        if (grossAmount == 0) {
+            showToast("Invalid amount");
+            finish();
+            return;
+        }
+
+        String orderId = "ORDER-" + System.currentTimeMillis();
+        TransactionRequest request = new TransactionRequest(orderId, grossAmount);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BACKEND_BASE_URL)
@@ -55,7 +63,7 @@ public class CheckoutActivity extends AppCompatActivity {
 
         ApiService apiService = retrofit.create(ApiService.class);
 
-        apiService.createTransaction().enqueue(new Callback<SnapTokenResponse>() {
+        apiService.createTransaction(request).enqueue(new Callback<SnapTokenResponse>() {
             @Override
             public void onResponse(Call<SnapTokenResponse> call, Response<SnapTokenResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -77,17 +85,16 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     private void startPayment(String snapToken) {
-        ArrayList<PaymentMethod> paymentMethods = new ArrayList<>();
-        paymentMethods.add(new PaymentMethod(com.midtrans.sdk.uikit.api.model.PaymentType.QRIS, com.midtrans.sdk.uikit.api.model.PaymentType.QRIS));
-
-        UiKitApi.getDefault().getPaymentApi().startPayment(this, paymentMethods, snapToken, null, null);
+        MidtransSDK.getInstance().setTransactionRequest(null); // Clear previous transaction
+        MidtransSDK.getInstance().startPaymentUiFlow(this, snapToken);
     }
 
-    private void handleTransactionResult(TransactionResult result) {
+    @Override
+    public void onTransactionFinished(TransactionResult result) {
         if (result.isTransactionCanceled()) {
             showToast("Transaction Canceled");
             finish();
-        } else if (result.getStatus().equals(UiKitConstants.STATUS_SUCCESS)) {
+        } else if (result.getStatus().equalsIgnoreCase("success")) {
             String transactionId = result.getResponse().getTransactionId();
             String amount = result.getResponse().getGrossAmount();
             String timestamp = result.getResponse().getTransactionTime();
@@ -95,10 +102,10 @@ public class CheckoutActivity extends AppCompatActivity {
             showToast("Payment Successful! ID: " + transactionId);
             logToBlockchain(transactionId, amount, timestamp);
 
-        } else if (result.getStatus().equals(UiKitConstants.STATUS_PENDING)) {
+        } else if (result.getStatus().equalsIgnoreCase("pending")) {
             showToast("Transaction Pending");
             finish();
-        } else if (result.getStatus().equals(UiKitConstants.STATUS_FAILED)) {
+        } else if (result.getStatus().equalsIgnoreCase("failed")) {
             showToast("Transaction Failed");
             finish();
         }
@@ -109,7 +116,7 @@ public class CheckoutActivity extends AppCompatActivity {
                 .thenAccept(txHash -> {
                     runOnUiThread(() -> {
                         showToast("Logged to Blockchain. TxHash: " + txHash);
-                        finish(); // Finish activity after logging
+                        finish();
                     });
                 })
                 .exceptionally(ex -> {

@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tapetrove.Activity.CheckoutActivity;
 import com.example.tapetrove.Activity.Profile.ProfileActivity;
 import com.example.tapetrove.Activity.Profile.WishlistFragment;
 import com.example.tapetrove.Api.ApiResponse;
@@ -228,10 +229,9 @@ public class PeminjamanFragment extends Fragment {
       btnsewa.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          Bundle bundle = new Bundle();
-          bundle.putSerializable("film", movie);
-          // Panggil metode untuk mengganti fragment dan kirim Bundle ke fragment peminjaman
-          ((MainActivity) getContext()).replaceFragmentWithBundle(new PembayaranFragment(), bundle);
+            Intent intent = new Intent(getActivity(), CheckoutActivity.class);
+            intent.putExtra(CheckoutActivity.EXTRA_GROSS_AMOUNT, 30000L);
+            startActivity(intent);
         }
       });
 
