@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import com.example.tapetrove.Activity.CheckoutActivity;
 import com.example.tapetrove.Activity.Profile.ProfileActivity;
-import com.example.tapetrove.Activity.Profile.WishlistFragment;
 import com.example.tapetrove.Api.ApiResponse;
 import com.example.tapetrove.Api.Genre;
 import com.example.tapetrove.Api.Trailer;
@@ -31,10 +30,8 @@ import com.example.tapetrove.Database.Peminjaman;
 import com.example.tapetrove.Database.Wishlist;
 import com.example.tapetrove.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

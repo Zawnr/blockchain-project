@@ -21,13 +21,26 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        replaceFragment(new HomeFragment());
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        // --- PERBAIKAN: Pemeriksaan sesi pengguna dilakukan pertama kali ---
+        if (currentUser == null) {
+            // Jika tidak ada pengguna yang login, langsung ke SignInActivity dan hentikan eksekusi lebih lanjut.
+            Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+            startActivity(intent);
+            finish();
+            return; // Penting untuk menghentikan eksekusi onCreate lebih lanjut
+        }
+
+        // --- Logika normal hanya berjalan jika pengguna sudah login ---
+        Toast.makeText(MainActivity.this, "Selamat datang " + currentUser.getEmail(), Toast.LENGTH_SHORT).show();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setSelectedItemId(R.id.home);
@@ -47,25 +60,18 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        if (user == null) {
-            Intent intent = new Intent(MainActivity.this, SignInActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(MainActivity.this, "Selamat datang " + user.getEmail(), Toast.LENGTH_SHORT).show();
-        }
-
-        // Handle intent from SearchAdapter
+        // Handle intent dari SearchAdapter, hanya jika ini bukan cold start (savedInstanceState == null)
         Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null) {
+        if (savedInstanceState == null && intent != null && intent.getExtras() != null && intent.hasExtra("movie")) {
             ApiResponse.Movie movie = (ApiResponse.Movie) intent.getSerializableExtra("movie");
             if (movie != null) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("film", movie);
                 replaceFragmentWithBundle(new PeminjamanFragment(), bundle);
             }
+        } else {
+            // Jika tidak ada intent khusus, muat fragment default (HomeFragment)
+            replaceFragment(new HomeFragment());
         }
     }
 

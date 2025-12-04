@@ -11,5 +11,5 @@ public interface ApiService {
      * @param request Body dari request yang berisi detail transaksi (orderId, grossAmount, dll)
      */
     @POST("api/create-transaction")
-    Call<SnapTokenResponse> createTransaction(@Body TransactionRequest request);
+    Call<SnapTokenResponse> createTransaction(@Body BackendTransactionRequest request);
 }

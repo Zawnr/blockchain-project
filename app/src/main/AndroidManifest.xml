@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"   />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"   />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"   />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -18,32 +18,43 @@
         android:theme="@style/Theme.TapeTrove"
         tools:replace="android:allowBackup"
         tools:targetApi="31">
+
         <activity
             android:name=".Activity.Profile.ProfileActivity"
             android:exported="false" />
+
         <activity
             android:name=".Activity.Authentication.SignUpActivity"
             android:exported="true"
-            android.windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden">
         </activity>
+
         <activity
             android:name=".Activity.Authentication.SignInActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".Activity.Search.SearchActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
+
         <activity
             android:name=".Activity.Home.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
+
+        <activity
+            android:name=".Activity.CheckoutActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
+
     </application>
 
 </manifest>

@@ -3,10 +3,11 @@ package com.example.tapetrove.Activity;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Model untuk data yang dikirim ke backend untuk membuat transaksi Midtrans.
- * Nama field disesuaikan dengan yang diharapkan oleh server.js (snake_case).
+ * Model untuk data yang dikirim ke backend (Express JS) untuk meminta Snap Token.
+ * Namanya diganti jadi 'BackendTransactionRequest' agar tidak bentrok dengan
+ * class 'TransactionRequest' milik library Midtrans.
  */
-public class TransactionRequest {
+public class BackendTransactionRequest {
 
     @SerializedName("order_id")
     private String orderId;
@@ -14,7 +15,7 @@ public class TransactionRequest {
     @SerializedName("gross_amount")
     private long grossAmount;
 
-    public TransactionRequest(String orderId, long grossAmount) {
+    public BackendTransactionRequest(String orderId, long grossAmount) {
         this.orderId = orderId;
         this.grossAmount = grossAmount;
     }

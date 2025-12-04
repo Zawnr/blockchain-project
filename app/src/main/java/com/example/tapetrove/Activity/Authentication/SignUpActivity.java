@@ -101,18 +101,18 @@ public class SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                               if (task.isSuccessful()) {
-                                Toast.makeText(SignUpActivity.this, "Akun berhasil dibuat", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "Pendaftaran berhasil! Silakan masuk.", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                               } else {
-                                Toast.makeText(SignUpActivity.this, "Gagal menyimpan data pengguna.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUpActivity.this, "Pendaftaran gagal. Silakan coba lagi.", Toast.LENGTH_LONG).show();
                               }
                             }
                           });
                 } else {
-                  Log.d(TAG, "createUserWithEmail:failed");
-                  Toast.makeText(SignUpActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                  Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                  Toast.makeText(SignUpActivity.this, "Pendaftaran gagal. Silakan coba lagi.", Toast.LENGTH_LONG).show();
                 }
               }
             });
